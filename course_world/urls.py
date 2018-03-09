@@ -16,9 +16,11 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from course_app import views
+from course_app.views.login import Login
+from course_app.views.register import StudentSignup
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', views.hello_world, name="hello_world")
+    url(r'^register', StudentSignup.as_view(), name="student-register"),
+    url(r'^login', Login.as_view(), name="student-login")
 ]
