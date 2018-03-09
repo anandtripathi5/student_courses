@@ -9,10 +9,6 @@ from webargs.core import ValidationError
 from logger import logger
 
 
-class AuthorizationFailedError(Exception):
-    pass
-
-
 class AlreadyExists(Exception):
     pass
 
@@ -48,13 +44,6 @@ def handle_exceptions(fn):
             return HttpResponse(
                 json.dumps({'message': io_err[1]}),
                 status=400,
-                content_type="application/json"
-            )
-        except AuthorizationFailedError as auth_err:
-            logger.error(auth_err.message)
-            return HttpResponse(
-                json.dumps({'message': auth_err.message}),
-                status=403,
                 content_type="application/json"
             )
         except AuthenticationFailed as auth_err:

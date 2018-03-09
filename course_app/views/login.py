@@ -1,27 +1,21 @@
-import json
-from django.http.response import HttpResponse
-from django.views.generic.base import View
-from marshmallow import fields
-from webargs.djangoparser import use_kwargs
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from course_app.functionality.student import login_functionality
 from course_app.utils.resource_exception import handle_exceptions
+from course_app.views.authentication import CsrfExemptSessionAuthentication
 
 
-student_login_request = dict(
-    user_name=fields.Str(required=True),
-    password=fields.Str(required=True)
-)
-
-
-class Login(View):
+class Login(APIView):
+    authentication_classes = (CsrfExemptSessionAuthentication, BasicAuthentication)
 
     @handle_exceptions
-    @use_kwargs(student_login_request)
-    def post(self, request, **kwargs):
-        jwt_token = login_functionality(request, **kwargs)
-        return HttpResponse(
-            json.dumps(jwt_token),
+    def post(self, request):
+        request_data = request.data
+        jwt_token = login_functionality(request, **request_data)
+        return Response(
+            data=jwt_token,
             status=200,
             content_type="application/json"
         )

@@ -13,7 +13,7 @@ class LoginTestCase(TestCase):
     def setUp(self):
         pass
 
-    def test_login_authentication_already_created(self):
+    def test_register_authentication_already_created(self):
         User.objects.create_user(username="anand", password="anand", email="anand")
         data = dict(
             user_name="anand",
@@ -26,7 +26,7 @@ class LoginTestCase(TestCase):
             **data
         )
 
-    def test_login_authentication_username_not_provided(self):
+    def test_register_authentication_username_not_provided(self):
         data = dict(password="anand")
         self.assertRaises(
             ValueError,

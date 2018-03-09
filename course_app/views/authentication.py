@@ -1,56 +1,39 @@
+from datetime import datetime
 from django.contrib.auth.models import User
-from rest_framework import status, exceptions
-from django.http import HttpResponse
-from rest_framework.authentication import get_authorization_header, \
-    BaseAuthentication
+from rest_framework import authentication
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.authentication import get_authorization_header
 import jwt
-import json
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 from course_world.settings import SECRET_KEY
 
 
-class TokenAuthentication(BaseAuthentication):
-    model = None
-
-    def get_model(self):
-        return User
-
+class CustomAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
         auth = get_authorization_header(request).split()
-        if not auth or auth[0].lower() != b'jwt':
-            return None
-
-        if len(auth) == 1:
-            msg = 'Invalid token header. No credentials provided.'
-            raise exceptions.AuthenticationFailed(msg)
-        elif len(auth) > 2:
-            msg = 'Invalid token header'
-            raise exceptions.AuthenticationFailed(msg)
-
-        try:
-            token = auth[1]
-            if token == "null":
-                msg = 'Null token not allowed'
-                raise exceptions.AuthenticationFailed(msg)
-        except UnicodeError:
-            msg = 'Invalid token header. Token string should not contain invalid characters.'
-            raise exceptions.AuthenticationFailed(msg)
-
+        if not auth or auth[0].lower() != 'jwt' or len(auth) == 1 or len(auth) > 2:
+            raise AuthenticationFailed("JWT Invalid Header")
+        token = auth[1]
+        if token == "null":
+            raise AuthenticationFailed('Null token not allowed')
         return self.authenticate_credentials(token)
 
     def authenticate_credentials(self, token):
-        model = self.get_model()
         payload = jwt.decode(token, SECRET_KEY)
         user_id = payload.get("user_id")
-        msg = {'Error': "Token mismatch", 'status': "401"}
+        exp = payload.get("exp")
         user = User.objects.get(
             id=user_id,
             is_active=True
         )
 
-        if not user.token['token'] == token:
-            raise exceptions.AuthenticationFailed(msg)
-        return (user, token)
+        if not user or datetime.now().strftime('%s') > exp:
+            raise AuthenticationFailed("Expired JWT token")
+        return user, None
 
-    def authenticate_header(self, request):
-        return 'Token'
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening

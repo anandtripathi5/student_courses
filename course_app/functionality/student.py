@@ -1,5 +1,8 @@
 import jwt
+from datetime import datetime, timedelta
 from function_logger import function_logger
+from function_validator import req_validator
+
 from course_app.utils.logger import logger
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -18,9 +21,23 @@ def dump_student(**kwargs):
 
 
 @function_logger(logger)
+@req_validator(param_name="user_name", err_description="USER-NAME-NOT-PASSED-REGISTER-CALL",
+               req=True, var_type=basestring)
+@req_validator(param_name="password", err_description="PASSWORD-NOT-PASSED-REGISTER-CALL",
+               req=True, var_type=basestring)
+@req_validator(param_name="email", err_description="EMAIL-NOT-PASSED-REGISTER-CALL",
+               req=True, var_type=basestring)
 def register_student(**kwargs):
     student_id = dump_student(**kwargs)
-    jwt_token = dict(token=jwt.encode(dict(user_id=student_id), SECRET_KEY))
+    jwt_token = dict(
+        token=jwt.encode(
+            dict(
+                user_id=student_id,
+                exp=(datetime.now() + timedelta(hours=1)).strftime('%s')
+            ),
+            SECRET_KEY
+        )
+    )
     return jwt_token
 
 
@@ -29,7 +46,7 @@ def login_authentication(**kwargs):
     user_name = kwargs.get('user_name')
     password = kwargs.get('password')
     try:
-        user = User.objects.get(username=user_name)
+        user = User.objects.get(username=user_name, is_active=True, is_superuser=False)
     except User.DoesNotExist:
         raise ValueError("User Not found")
     authentication = authenticate(username=user_name, password=password)
@@ -39,10 +56,21 @@ def login_authentication(**kwargs):
 
 
 @function_logger(logger)
+@req_validator(param_name="user_name", err_description="USER-NAME-NOT-PASSED",
+               req=True, var_type=basestring)
+@req_validator(param_name="password", err_description="PASSWORD-NOT-PASSED",
+               req=True, var_type=basestring)
 def login_functionality(request, **kwargs):
     user, authentication = login_authentication(**kwargs)
     if authentication.is_authenticated:
         login(request, authentication)
-    jwt_token = {'token': jwt.encode(dict(user_id=user.id), SECRET_KEY)}
+    jwt_token = {'token': jwt.encode(
+        dict(
+            user_id=user.id,
+            exp=(datetime.now() + timedelta(hours=1)).strftime('%s')
+        ),
+        SECRET_KEY
+    )
+    }
     return jwt_token
 
