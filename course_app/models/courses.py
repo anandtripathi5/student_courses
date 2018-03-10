@@ -54,6 +54,9 @@ class Course(models.Model):
         help_text='modified date of course'
     )
 
+    class Meta:
+        db_table = "course"
+
     def __str__(self):
         """
         String for representing the Model object.
