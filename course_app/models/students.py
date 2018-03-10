@@ -22,13 +22,15 @@ class StudentCourseMap(models.Model):
         default=uuid.uuid4,
         help_text="primary key of stundent enrolled"
     )
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         User,
-        help_text="foreign key of student"
+        help_text="foreign key of student",
+        db_index=True
     )
-    course_id = models.ForeignKey(
+    course = models.ForeignKey(
         Course,
-        help_text='foreign key of course'
+        help_text='foreign key of course',
+        db_index=True
     )
     course_name = models.TextField(
         max_length=200,
@@ -50,10 +52,10 @@ class StudentCourseMap(models.Model):
         auto_now=True,
         help_text='modified date of course'
     )
-    models.Index(fields=['user_id', 'course_id'])
 
     class Meta:
         db_table = "student_course_map"
+        unique_together = ('course', 'user',)
 
     def __str__(self):
         """

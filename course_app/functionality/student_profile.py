@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate
 from function_logger import function_logger
 from function_validator import req_validator
-
 from course_app.utils.logger import logger
 
 

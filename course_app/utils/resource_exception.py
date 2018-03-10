@@ -3,7 +3,7 @@ from functools import wraps
 
 from django.db import IntegrityError
 from django.http.response import HttpResponse
-from jwt import ExpiredSignatureError, DecodeError
+from jwt.exceptions import ExpiredSignatureError, DecodeError
 from rest_framework.exceptions import AuthenticationFailed
 from webargs.core import ValidationError
 from logger import logger

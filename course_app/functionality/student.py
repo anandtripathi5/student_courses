@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from function_logger import function_logger
 from function_validator import req_validator
 
+from course_app.constants.common_constants import DEFAULT_JWT_EXP_HOUR
 from course_app.utils.logger import logger
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -33,7 +34,7 @@ def register_student(**kwargs):
         token=jwt.encode(
             dict(
                 user_id=student_id,
-                exp=(datetime.now() + timedelta(hours=1)).strftime('%s')
+                exp=(datetime.now() + timedelta(hours=DEFAULT_JWT_EXP_HOUR)).strftime('%s')
             ),
             SECRET_KEY
         )
@@ -67,7 +68,7 @@ def login_functionality(request, **kwargs):
     jwt_token = {'token': jwt.encode(
         dict(
             user_id=user.id,
-            exp=(datetime.now() + timedelta(hours=1)).strftime('%s')
+            exp=(datetime.now() + timedelta(hours=DEFAULT_JWT_EXP_HOUR)).strftime('%s')
         ),
         SECRET_KEY
     )

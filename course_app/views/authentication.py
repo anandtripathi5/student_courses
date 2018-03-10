@@ -1,11 +1,10 @@
-from datetime import datetime
 from django.contrib.auth.models import User
+from jwt import ExpiredSignatureError
 from rest_framework import authentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authentication import get_authorization_header
 import jwt
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-
+from rest_framework.authentication import SessionAuthentication
 from course_world.settings import SECRET_KEY
 
 
@@ -20,15 +19,17 @@ class CustomAuthentication(authentication.BaseAuthentication):
         return self.authenticate_credentials(token)
 
     def authenticate_credentials(self, token):
-        payload = jwt.decode(token, SECRET_KEY)
+        try:
+            payload = jwt.decode(token, SECRET_KEY)
+        except ExpiredSignatureError as err:
+            raise AuthenticationFailed(err)
         user_id = payload.get("user_id")
-        exp = payload.get("exp")
         user = User.objects.get(
             id=user_id,
             is_active=True
         )
 
-        if not user or datetime.now().strftime('%s') > exp:
+        if not user:
             raise AuthenticationFailed("Expired JWT token")
         return user, None
 

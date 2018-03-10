@@ -1,7 +1,6 @@
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from course_app.functionality.student import login_functionality
 from course_app.utils.resource_exception import handle_exceptions
 from course_app.views.authentication import CsrfExemptSessionAuthentication
