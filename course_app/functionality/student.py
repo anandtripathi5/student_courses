@@ -49,10 +49,10 @@ def login_authentication(**kwargs):
     try:
         user = User.objects.get(username=user_name, is_active=True, is_superuser=False)
     except User.DoesNotExist:
-        raise ValueError("User Not found")
+        raise ValueError("USER-NOT-FOUND")
     authentication = authenticate(username=user_name, password=password)
     if not authentication:
-        raise ValueError("Invalid credentials")
+        raise ValueError("INVALID-CREDENTIALS")
     return user, authentication
 
 

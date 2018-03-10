@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from jwt import ExpiredSignatureError
+from jwt import ExpiredSignatureError, DecodeError
 from rest_framework import authentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.authentication import get_authorization_header
@@ -21,7 +21,7 @@ class CustomAuthentication(authentication.BaseAuthentication):
     def authenticate_credentials(self, token):
         try:
             payload = jwt.decode(token, SECRET_KEY)
-        except ExpiredSignatureError as err:
+        except (ExpiredSignatureError, DecodeError) as err:
             raise AuthenticationFailed(err)
         user_id = payload.get("user_id")
         user = User.objects.get(
