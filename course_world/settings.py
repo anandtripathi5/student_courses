@@ -82,12 +82,12 @@ WSGI_APPLICATION = 'course_world.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'course_world',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dauk7561es7qin',
+        'USER': 'mraangxqmugvlm',
+        'PASSWORD': '885173ca9b8b8310970bca9cdcdac6ba25cfa801f996b4d75ba4130e685e691c',
+        'HOST': 'ec2-50-16-217-122.compute-1.amazonaws.com',
+        'PORT': '5432',
         'TEST': {
             'NAME': 'test_course_world',
         }
