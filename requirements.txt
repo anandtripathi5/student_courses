@@ -25,4 +25,6 @@ uritemplate==3.0.0
 urllib3==1.22
 webargs==2.0.0
 psycopg2
-
+whitenoise
+python-decouple
+dj-database-url

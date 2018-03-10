@@ -81,19 +81,10 @@ WSGI_APPLICATION = 'course_world.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dauk7561es7qin',
-        'USER': 'mraangxqmugvlm',
-        'PASSWORD': '885173ca9b8b8310970bca9cdcdac6ba25cfa801f996b4d75ba4130e685e691c',
-        'HOST': 'ec2-50-16-217-122.compute-1.amazonaws.com',
-        'PORT': '5432',
-        'TEST': {
-            'NAME': 'test_course_world',
-        }
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL')
+    )
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -133,3 +124,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 APPEND_SLASH=False
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
