@@ -12,7 +12,7 @@ function-logger==0.2
 function-validator==0.1
 idna==2.6
 itypes==1.1.0
-Jinja2==2.10
+Jinja2==2.11.3
 MarkupSafe==1.0
 marshmallow==2.15.1
 MySQL-python==1.2.5
