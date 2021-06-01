@@ -24,6 +24,6 @@ pytz==2018.3
 requests==2.18.4
 simplejson==3.13.2
 uritemplate==3.0.0
-urllib3==1.22
+urllib3==1.26.5
 webargs==2.0.0
 
